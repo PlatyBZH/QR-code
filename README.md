@@ -1,2 +1,3 @@
 # QR-code
-Notre magnifique projet d'informatique de BCPST
+
+Création et lecture de code QR en langage ACSII
