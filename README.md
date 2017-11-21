@@ -1,7 +1,7 @@
 
 # Description du Projet
 
-Création et lecture de code QR en langage ASCII
+Création et lecture de code QR en langage ISO 8859-1 (8bits)
 
 # Membres
 
@@ -11,7 +11,7 @@ Arthur Réauté, Blanche Jansen, Annaëlle Moreau et Camille Huitorel
 
 I-Du message au QR-code :
 
-    1-Traduction du message binaire 8bits via le langage ASCII
+    1-Traduction du message binaire 8bits via le langage ISO 8859-1
     
     2-Choix de la version/du format du QR selon la taille
     
