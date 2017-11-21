@@ -36,3 +36,5 @@ II-Du QR-code au message
     4-Détection et retraît du masque
     
     5-Analyse du code du QR
+    
+    C'est cool
