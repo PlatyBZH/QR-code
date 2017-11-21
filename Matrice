@@ -1,0 +1,7 @@
+Creation de la matrice:
+Les "finder patterns" sont placés:
+- un en (0,0) de la matrice
+- un en ([(((V-1)*4)+21) - 7], 0) avec V=version utilisée 
+- un en (0,[(((V-1)*4)+21) - 7])
+
+Sachant qu'un finder pattern a pour taille: (7x7)
