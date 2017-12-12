@@ -1,15 +1,27 @@
 for i in range(img.shape[0]) : #parcours de toutes les lignes
     j=0 #compteur des colonnes
     pix=img[i,j,0]
-    premiernoir,derniernoir=0,0
-    while j<img.shape[1] and premiernoir==0 :
+    preN,derN=0,0
+    while j<img.shape[1] and preN==0 :
+        if img[i,j,0]==0 :
+            preN=[i,j]
         j+=1
-        if img[i,j,0]=0 :
-            premiernoir=j
     while j<img.shape[1] :
+        if img[i,j,0]==0 :
+            derN=[i,j]
         j+=1
-        if img[i,j,0]=0 :
-            derniernoir=j
-    if derniernoir=!0 :
+    if derN!=0 :
         break
-    
+
+
+lenQR=derN[1]-preN[1]+1
+QRrogne=np.zeros([lenQR,lenQR,3])
+
+for i in range(lenQR) :
+    for j in range(lenQR) :
+        for k in range(3) :
+            QRrogne[i,j,k]=img[i+preN[0],j+preN[1],k]
+
+plt.imshow(QRrogne)
+plt.show()
+
