@@ -13,15 +13,20 @@ for i in range(img.shape[0]) : #parcours de toutes les lignes
     if derN!=0 :
         break
 
-
 lenQR=derN[1]-preN[1]+1
-QRrogne=np.zeros([lenQR,lenQR,3])
+#QRrogne=np.zeros([lenQR,lenQR,3])
+#
+#for i in range(lenQR) :
+#    for j in range(lenQR) :
+#        for k in range(3) :
+#            #QRrogne[i,j,k]=int(img[i+preN[0],j+preN[1],k])
+#            
+#plt.imshow(QRrogne)
+#plt.show()
 
-for i in range(lenQR) :
-    for j in range(lenQR) :
-        for k in range(3) :
-            QRrogne[i,j,k]=img[i+preN[0],j+preN[1],k]
+QRrogne=img[preN[0]:preN[0]+lenQR,preN[1]:derN[1]+1,:]
 
 plt.imshow(QRrogne)
 plt.show()
 
+misc.imsave("QRrogne.jpg",QRrogne)
