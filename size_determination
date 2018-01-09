@@ -3,6 +3,15 @@
 #évaluation de la taille en pixel des carrés
 j=0
 while QRrogne[0,j,0]==0 : #parcours des colonnes
-j+=1
-premB=j#colonne du premier pixel blanc
-taillecarre=(premB-1)//7#taille d'un carré en pixel
+  j+=1
+  premB=j#colonne du premier pixel blanc
+taillecarre=premB//7#taille d'un carré en pixel
+
+
+#Création de la matrice QR
+
+MatQR=np.zeros([25,25]) #Correspond à la version 2, pour le test uniquement
+for i in range(25) :
+    for j in range(25) :
+        if QRrogne[taillecarre*i,taillecarre*j,0]==255 :
+            MatQR[i,j]+=1
