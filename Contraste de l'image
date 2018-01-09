@@ -1,0 +1,22 @@
+#Importations
+
+from scipy import misc
+import matplotlib.pyplot as plt
+import numpy as np
+
+#import os
+#os.chdir("Chemin du répertoire")
+#os.getcwd()   Pour vérifier
+
+img=misc.imread("QR du pif.png")
+
+for i in range(img.shape[0]) :
+    for j in range(img.shape[1]) :
+        for k in range(3) :
+            if img[i,j,k]>150 :
+                img[i,j,k]=255
+            else :
+                img[i,j,k]=0
+
+plt.imshow(img)
+plt.show()
