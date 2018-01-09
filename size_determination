@@ -1,0 +1,8 @@
+#7détermination de la taille d'un carré en pixel
+
+#évaluation de la taille en pixel des carrés
+j=0
+while QRrogne[0,j,0]==0 : #parcours des colonnes
+j+=1
+premB=j#colonne du premier pixel blanc
+taillecarre=(premB-1)//7#taille d'un carré en pixel
