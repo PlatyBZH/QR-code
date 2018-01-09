@@ -1,0 +1,25 @@
+
+
+#Protection des zones non masquées A CORRIGER
+
+MatQRsecure=np.copy(MatQR)
+for i in range(9) :  #protection des 3 finder patterns
+    for j in range(9) :
+        MatQRsecure[i,j]+=42 #en haut à gauche
+    for j in range(8) :
+        MatQRsecure[(V*4+17)-9+j,i]+=42 #en haut à droite
+        MatQRsecure[(V*4+17)-10+i,j]+=42 #en bas à gauche
+for k in range(4*V) : #protection des 2 timing patterns
+    MatQRsecure[6,9+k]+=42 #horizontal
+    MatQRsecure[9+k,6]+=42 #vertical
+
+#Reference des masques
+
+RefMasque=["(i+j)%2 == 0","i%2 == 0","j%3 == 0","(i+j)%3 == 0","(i/2+j/3)%2 == 0","(i*j)%2+(i*j)%3 == 0","((i*j)%3+i*j)%2 == 0","((i*j)%3+i+j)%2== 0"]
+
+
+#Demasquage
+
+FormatMasque=str(int(MatQR[8,2]))+str(int(MatQR[8,3]))+str(int(MatQR[8,4]))
+NumMasque=int(FormatMasque,2)
+
