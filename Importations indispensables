@@ -7,3 +7,5 @@ import os
 
 #Dans la console :
 #   os.chdir("")
+
+img=misc.imread("QR du pif.png")
