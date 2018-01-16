@@ -21,3 +21,4 @@ for i in range(Tailleversion) :
         if QRrogne[taillecarre*i,taillecarre*j,0]==255 :
             MatQR[i,j]+=1
 
+#
