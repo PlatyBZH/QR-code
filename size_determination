@@ -7,11 +7,17 @@ while QRrogne[0,j,0]==0 : #parcours des colonnes
   premB=j#colonne du premier pixel blanc
 taillecarre=premB//7#taille d'un carré en pixel
 
+#Détermination de la version
+Version=((np.shape(QRrogne)[0]/taillecarre-2*8)-1)//4#longueur du timing pattern -1(car impair) divisé par 4 (http://www-igm.univ-mlv.fr/~dr/XPOSE2011/QRCode/description.html)
+
+Tailleversion=Version*4+17
+
 
 #Création de la matrice QR
 
-MatQR=np.zeros([25,25]) #Correspond à la version 2, pour le test uniquement
-for i in range(25) :
-    for j in range(25) :
+MatQR=np.zeros([Tailleversion,Tailleversion]) #Création d'une matrice en carré à remplir
+for i in range(Tailleversion) :
+    for j in range(Tailleversion) :
         if QRrogne[taillecarre*i,taillecarre*j,0]==255 :
             MatQR[i,j]+=1
+
