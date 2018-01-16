@@ -8,7 +8,7 @@ while QRrogne[0,j,0]==0 : #parcours des colonnes
 taillecarre=premB//7#taille d'un carré en pixel
 
 #Détermination de la version
-Version=((np.shape(QRrogne)[0]/taillecarre-2*8)-1)//4#longueur du timing pattern -1(car impair) divisé par 4 (http://www-igm.univ-mlv.fr/~dr/XPOSE2011/QRCode/description.html)
+Version=int(((np.shape(QRrogne)[0]/taillecarre-2*8)-1)//4) #longueur du timing pattern -1(car impair) divisé par 4 (http://www-igm.univ-mlv.fr/~dr/XPOSE2011/QRCode/description.html)        Doit être un entier
 
 Tailleversion=Version*4+17
 
