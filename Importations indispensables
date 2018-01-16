@@ -1,0 +1,9 @@
+#Importations
+
+from scipy import misc
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+#Dans la console :
+#   os.chdir("")
