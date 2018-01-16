@@ -18,8 +18,19 @@ for k in range(4*Version) : #protection des 2 timing patterns
 RefMasque=["(i+j)%2 == 0","i%2 == 0","j%3 == 0","(i+j)%3 == 0","(i/2+j/3)%2 == 0","(i*j)%2+(i*j)%3 == 0","((i*j)%3+i*j)%2 == 0","((i*j)%3+i+j)%2== 0"]
 
 
-#Demasquage
+
 
 FormatMasque=str(int(MatQR[8,2]))+str(int(MatQR[8,3]))+str(int(MatQR[8,4]))
 NumMasque=int(FormatMasque,2)
 
+#Démasquage
+
+def inverse(x) :
+    return int(x==0)
+    
+for i in range (Tailleversion) :
+    for j in range (Tailleversion) :
+        if MatQRsecure[i,j]<42 :
+            if RefMasque[NumMasque] :#a corriger controle flux python dictionnaire
+                MatQRsecure[i,j]=inverse(MatQRsecure[i,j])
+                
