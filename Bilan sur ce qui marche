@@ -11,6 +11,7 @@ import os
 img=misc.imread("QR du pif.png")
 
 
+
 #Contraste
 
 for i in range(img.shape[0]) :
@@ -22,7 +23,7 @@ for i in range(img.shape[0]) :
                 img[i,j,k]=0
 
 
-#Rognage
+
 for i in range(img.shape[0]) : #parcours de toutes les lignes
     j=0 #compteur des colonnes
     pix=img[i,j,0]
@@ -57,7 +58,9 @@ plt.show()
 misc.imsave("QRrogne.jpg",QRrogne)
 
 
-#détermination de la taille d'un carré en pixel
+
+
+#7détermination de la taille d'un carré en pixel
 
 #évaluation de la taille en pixel des carrés
 j=0
@@ -74,11 +77,20 @@ Tailleversion=Version*4+17
 
 #Création de la matrice QR
 
-MatQR=np.zeros([Tailleversion,Tailleversion]) #Création d'une matrice en carré à remplir
+
+MatQR=np.zeros([Tailleversion,Tailleversion],dtype='int') #Création d'une matrice en carré à remplir, en forçant le type des données en nombres entiers
 for i in range(Tailleversion) :
     for j in range(Tailleversion) :
         if QRrogne[taillecarre*i,taillecarre*j,0]==255 :
             MatQR[i,j]+=1
+
+#
+
+
+
+
+
+
 
 
 #Protection des zones non masquées
@@ -94,12 +106,10 @@ for k in range(4*Version) : #protection des 2 timing patterns
     MatQRsecure[6,9+k]+=42 #horizontal
     MatQRsecure[9+k,6]+=42 #vertical
     
-    
 #Reference des masques
 
 
 RefMasque = {  0 :lambda i,j: (i+j)%2 == 0,  1 :lambda i,j: i%2 == 0,  2 :lambda i,j: j%3 == 0,  3 :lambda i,j: (i+j)%3 == 0,  4 :lambda i,j: (i/2+j/3)%2 == 0,  5 :lambda i,j: (i*j)%2+(i*j)%3 == 0,  6 :lambda i,j: ((i*j)%3+i*j)%2 == 0,  7 :lambda i,j: ((i*j)%3+i+j)%2== 0}
-                #On utilise la structure de données de type Dictionnaire
 
 FormatMasque=str(int(MatQR[8,2]))+str(int(MatQR[8,3]))+str(int(MatQR[8,4]))
 NumMasque=int(FormatMasque,2)
@@ -110,12 +120,10 @@ def inverse(x) :
     return int(x==0)
 
 MatQRdemask=np.copy(MatQRsecure)
-
 for i in range (Tailleversion) :
     for j in range (Tailleversion) :
         if MatQRsecure[i,j]<42 :
             if RefMasque[NumMasque](i,j) :#a corriger controle flux python dictionnaire
                 MatQRdemask[i,j]=inverse(MatQRdemask[i,j])
-
 
 
