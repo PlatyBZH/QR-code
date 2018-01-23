@@ -19,7 +19,7 @@ for i in range(img.shape[0]) :
             if img[i,j,k]>150 :
                 img[i,j,k]=255
             else :
-img[i,j,k]=0
+                img[i,j,k]=0
 
 
 #Rognage
@@ -94,3 +94,28 @@ for k in range(4*Version) : #protection des 2 timing patterns
     MatQRsecure[6,9+k]+=42 #horizontal
     MatQRsecure[9+k,6]+=42 #vertical
     
+    
+#Reference des masques
+
+
+RefMasque = {  0 :lambda i,j: (i+j)%2 == 0,  1 :lambda i,j: i%2 == 0,  2 :lambda i,j: j%3 == 0,  3 :lambda i,j: (i+j)%3 == 0,  4 :lambda i,j: (i/2+j/3)%2 == 0,  5 :lambda i,j: (i*j)%2+(i*j)%3 == 0,  6 :lambda i,j: ((i*j)%3+i*j)%2 == 0,  7 :lambda i,j: ((i*j)%3+i+j)%2== 0}
+                #On utilise la structure de données de type Dictionnaire
+
+FormatMasque=str(int(MatQR[8,2]))+str(int(MatQR[8,3]))+str(int(MatQR[8,4]))
+NumMasque=int(FormatMasque,2)
+
+#Démasquage
+
+def inverse(x) :
+    return int(x==0)
+
+MatQRdemask=np.copy(MatQRsecure)
+
+for i in range (Tailleversion) :
+    for j in range (Tailleversion) :
+        if MatQRsecure[i,j]<42 :
+            if RefMasque[NumMasque](i,j) :#a corriger controle flux python dictionnaire
+                MatQRdemask[i,j]=inverse(MatQRdemask[i,j])
+
+
+
