@@ -1,0 +1,19 @@
+#----------------------EN TRAVAUX----------------------------------------------
+
+def parcoursbits( ) :
+    i=0
+    Nbbits=0
+    octet=""
+    while Nbbits<8 :
+        i+=1
+        for j in range(2) :
+            positionbit =
+            valeurbit = MatQRdemask[positionbit[0],positionbit[1]]
+            if valeurbit<42 :
+                octet+=str(valeurbit)
+                Nbbits+=1
+    Listeoctet+=[octet]
+    return
+
+
+Miroir en bas
