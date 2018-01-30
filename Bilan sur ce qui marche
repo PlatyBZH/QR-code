@@ -81,7 +81,7 @@ Tailleversion=Version*4+17
 MatQR=np.zeros([Tailleversion,Tailleversion],dtype='int') #Création d'une matrice en carré à remplir, en forçant le type des données en nombres entiers
 for i in range(Tailleversion) :
     for j in range(Tailleversion) :
-        if QRrogne[taillecarre*i,taillecarre*j,0]==255 :
+        if QRrogne[taillecarre*i,taillecarre*j,0]==0 :
             MatQR[i,j]+=1
 
 #
