@@ -17,3 +17,45 @@ def parcoursbits(demarrage,Taille) :
         positionbit[0]-=1 #de bas en haut
     Listeoctet+=[octet]
     return Listeoctet
+
+
+
+#----------------------EN TRAVAUX----------------------------------------------
+
+def parcoursbits(demarrage,Taille) :
+    "demarrage:point de démarrage du parcours (TYP=2-liste)       Taille: nombre de bits à lire"
+    Matlecture=MatQRdemask[:]
+    i=0
+    Nbbits=0
+    octet=""
+    positionbit=demarrage #position du bit à extraire
+    while Nbbits<Taille :
+        i+=1
+        for j in range(2) :
+             #de droite à gauche
+            valeurbit = Matlecture[positionbit[0],positionbit[1]]
+            if valeurbit<42 :
+                octet+=str(valeurbit)
+                Nbbits+=1
+            positionbit[1]-=1 #retour à la colonne
+        positionbit[0]-=1 #de bas en haut
+        positionbit[1]+=1
+        if positionbit[0]<0 :
+            Matlecture=Matlecture[::-1,:]
+            positionbit=[Tailleversion-1,positionbit[1]-2]
+    positionbit[0]-=1
+    positionbit[1]+=1
+    return [octet,positionbit]
+
+
+Enc=parcoursbits([Tailleversion-1,Tailleversion-1],4)[0] #Pour détecter le type de données
+#sdilfhssgsdfvsvgl Enc---->8bits à lire
+Length=int(parcoursbits([Tailleversion-3,Tailleversion-1],8)[0],2) #Donne la longueur du message
+prembit=parcoursbits([Tailleversion-3,Tailleversion-1],8)[1]
+Listeoctet=[]
+for l in range(Length) :
+    resultat=parcoursbits(prembit,8)
+    Listeoctet+=resultat[0]
+    prembit=resultat[1]
+
+
