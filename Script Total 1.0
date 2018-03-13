@@ -9,7 +9,7 @@ import os
 
 
 RefMasque = {  0 :lambda i,j: (i+j)%2 == 0,  1 :lambda i,j: i%2 == 0,  2 :lambda i,j: j%3 == 0,  3 :lambda i,j: (i+j)%3 == 0,  4 :lambda i,j: (i/2+j/3)%2 == 0,  5 :lambda i,j: (i*j)%2+(i*j)%3 == 0,  6 :lambda i,j: ((i*j)%3+i*j)%2 == 0,  7 :lambda i,j: ((i*j)%3+i+j)%2== 0}  #Références des masques
-
+Align = #A RECUPERER SUR ORDI ARTHUR
 
 img=misc.imread("QR du pif.png")
 
@@ -87,7 +87,14 @@ for i in range(9) :  #protection des 3 finder patterns
 for k in range(4*Version) : #protection des 2 timing patterns
     MatQRsecure[6,9+k]+=42 #horizontal
     MatQRsecure[9+k,6]+=42 #vertical
-
+ListePosAlign=[]
+for i in Align[Version] : #liste des positions des centres des aligment patterns
+    for j in Align[Version] :
+        ListePosAlign.append([i,j])
+for PosCentral in ListePosAlign : #protection des alignment patterns
+    for i in range(-1,2) :
+        for j in range(-1,2) :
+            MatQRsecure[PosCentral[0]+i,PosCentral[1]+j]+=42
 
 #Demasquage
 FormatMasque=str(int(MatQR[8,4]))+str(int(MatQR[8,3]))+str(int(MatQR[8,2]))
