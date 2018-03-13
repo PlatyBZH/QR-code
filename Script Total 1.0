@@ -1,5 +1,10 @@
-#----------------Importations-----------------------
+"""
+Projet info: Lecture d'un QR Code
+Auteurs: Huitorel Camille, Moreau Annaëlle, Réauté Arthur
+Date:
+"""
 
+#----------------Importations-----------------------
 from scipy import misc
 import matplotlib.pyplot as plt
 import numpy as np
