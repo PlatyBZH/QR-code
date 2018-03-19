@@ -14,7 +14,7 @@ import os
 
 
 RefMasque = {  0 :lambda i,j: (i+j)%2 == 0,  1 :lambda i,j: i%2 == 0,  2 :lambda i,j: j%3 == 0,  3 :lambda i,j: (i+j)%3 == 0,  4 :lambda i,j: (i/2+j/3)%2 == 0,  5 :lambda i,j: (i*j)%2+(i*j)%3 == 0,  6 :lambda i,j: ((i*j)%3+i*j)%2 == 0,  7 :lambda i,j: ((i*j)%3+i+j)%2== 0}  #Références des masques
-Align = #A RECUPERER SUR ORDI ARTHUR
+posAlPat = {  1 :[],  2 :[18],  3 :[22],  4 :[26],  5 :[30],  6 :[34],  7 :[22, 38],  8 :[24, 42],  9 :[26, 46],  10 :[28, 50],  11 :[30, 54],  12 :[32, 58],  13 :[34, 62],  14 :[26, 46, 66],  15 :[26, 48, 70],  16 :[26, 50, 74],  17 :[30, 54, 78],  18 :[30, 56, 82],  19 :[30, 58, 86],  20 :[34, 62, 90],  21 :[28, 50, 72, 94],  22 :[26, 50, 74, 98],  23 :[30, 54, 78, 102],  24 :[28, 54, 80, 106],  25 :[32, 58, 84, 110],  26 :[30, 58, 86, 114],  27 :[34, 62, 90, 118],  28 :[26, 50, 74, 98, 122],  29 :[30, 54, 78, 102, 126],  30 :[26, 52, 78, 104, 130],  31 :[30, 56, 82, 108, 134],  32 :[34, 60, 86, 112, 138],  33 :[30, 58, 86, 114, 142],  34 :[34, 62, 90, 118, 146],  35 :[30, 54, 78, 102, 126, 150],  36 :[24, 50, 76, 102, 128, 154],  37 :[28, 54, 80, 106, 132, 158],  38 :[32, 58, 84, 110, 136, 162],  39 :[26, 54, 82, 110, 138, 166],  40 :[30, 58, 86, 114, 142, 170]}
 
 img=misc.imread("QR du pif.png")
 
@@ -93,8 +93,8 @@ for k in range(4*Version) : #protection des 2 timing patterns
     MatQRsecure[6,9+k]+=42 #horizontal
     MatQRsecure[9+k,6]+=42 #vertical
 ListePosAlign=[]
-for i in Align[Version] : #liste des positions des centres des aligment patterns
-    for j in Align[Version] :
+for i in posAlPat[Version] : #liste des positions des centres des aligment patterns
+    for j in posAlPat[Version] :
         ListePosAlign.append([i,j])
 for PosCentral in ListePosAlign : #protection des alignment patterns
     for i in range(-1,2) :
