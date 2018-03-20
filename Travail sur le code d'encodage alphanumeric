@@ -45,12 +45,25 @@ else: # le message est encodé soit en byte ('0100') soit en alphanumeric ('0010
         prembit=resultat[1]
         Matlecture=resultat[2]
 
-    
-    message=""
+ 
+#Lecture du message à proprement dit          A CONTINUER
+
+for l in range(Length) : 
+    resultat=parcoursbits(prembit,8,Matlecture)
+    Listeoctet.append(resultat[0])
+    prembit=resultat[1]
+    Matlecture=resultat[2]
+
+message=""
+if Enc=="0010" :
     for letter in Listeoctet :
-        message+=str(chr(int(letter,2))) #chr permet de donner la correspoandance dans la table ASCII inscrite dans Python
-    
-    print(message)
-
-
+        message+=str(chr(int(letter,2))) #chr permet de donner la correspoandance dans la table Unicode inscrite dans Python (la table ASCII y est inclue)
+elif Enc=="0010" :
+    for doubleletter in Listeoctet :
+        letter1,letter2=doubleletter//45,doubleletter%45
+        
+        
+        
+print(message)
+   
 #
