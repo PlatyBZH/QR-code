@@ -1,10 +1,16 @@
+alphanumeric=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"," ","$","%","*","+","-",".","/",":"]  #table alphanumerique
+
+img=misc.imread("QR code alphanumeric HELLO WORLD.png")
+
+
+
 #Détermination du type de données (ENC) et du la longueur du message (Length)
 
 
 
 demarrage=[Tailleversion-1,Tailleversion-1] #position de départ pour lire Enc
 Matlecture=MatQRdemask[:] #Matrice de travail au départ : la matrice démasquée
-Enc=parcoursbits(demarrage,4,Matlecture)[0] #Pour détecter le type de données
+Enc=parcoursbits(demarrage,2,4,Matlecture)[0] #Pour détecter le type de données
 demarrage=[Tailleversion-3,Tailleversion-1] #position de départ pour lire Length
 Listeoctet=[] #Inititalisation de la liste des octets
 
@@ -17,50 +23,58 @@ else :
     LengthIndice=2
     
 if Enc!='0100' and Enc!='0010':
-    print(Ce QR code est encodé dans un mode différent du byte et de l alphanumeric. Impossible de le décoder)
+    print("Ce QR code est encodé dans un mode différent du byte et de l alphanumeric. Impossible de le décoder")
 else: # le message est encodé soit en byte ('0100') soit en alphanumeric ('0010')
 # Ici on prend en compte le mode d'encodage pour déterminer la taille de LENGTH
-    if Enc=="0100" :      
-    """ Le message est codé en Byte """
-        EncSize=8     # Nombre de bits qu'il faut lire pour obtenir un character du message
+    if Enc=="0100" :      #Le message est codé en Byte 
+        EncSize=8     # Nombre de bits qu'il faut lire pour obtenir un caractere du message
         if LengthIndice==1 :
             LengthSize=8
         else :
             LengthSize=16
-    else :
-        """ Le message est codé en Alphanumeric """
-        EncSize=11   # Nombre de bits qu'il faut lire pour obtenir 2 characters du message 
+    else :   #Le message est codé en Alphanumeric 
+        EncSize=11   # Nombre de bits pour une double lettre
         if LengthIndice==1 :
             LengthSize=9
         elif LengthSize==2 :
             LengthSize=11
         else :
             LengthSize=13
-    resultat=parcoursbits(demarrage,LengthSize,Matlecture) #Résultat de la fonction parcoursbits
+    resultat=parcoursbits(demarrage,2,LengthSize,Matlecture) #Résultat de la fonction parcoursbits
     Length=int(resultat[0],2) #Donne la longueur du message
+    if Enc=="0010" :   # Attention en alphanumeric puisque 11bits code 2 lettres, alors il faut lire seulement la moitié de la longueur du message (LENGTH)
+        if Length%2==0:
+            LengthCorr=Length//2
+        else:
+            LengthCorr=(Length+1)//2
+    else:               # Ce n'est pas le cas en byte par contre, un octet est bien égale à une lettre
+        LengthCorr=Length
+        
     prembit=resultat[1] #Donne la position du prochain bit à lire
-    for l in range(Length) :      #Lecture du message à proprement dit
-        resultat=parcoursbits(prembit,EncSize,Matlecture)
+    decallage=resultat[2]  # on prend en compte si LENGTH induit un décallage à  la suite de la lecture de ses bits
+    Matlecture=resultat[3]  
+    for l in range(Length) :    #Lecture du message à proprement dit
+        resultat=parcoursbits(prembit,decallage,EncSize,Matlecture)
         Listeoctet.append(resultat[0])
         prembit=resultat[1]
-        Matlecture=resultat[2]
+        decallage=resultat[2]
+        Matlecture=resultat[3] 
+
 
  
-#Lecture du message à proprement dit          A CONTINUER
-
-for l in range(Length) : 
-    resultat=parcoursbits(prembit,8,Matlecture)
-    Listeoctet.append(resultat[0])
-    prembit=resultat[1]
-    Matlecture=resultat[2]
+#Lecture du message à proprement dit          
 
 message=""
 if Enc=="0010" :
     for letter in Listeoctet :
-        message+=str(chr(int(letter,2))) #chr permet de donner la correspoandance dans la table Unicode inscrite dans Python (la table ASCII y est inclue)
+        message+=str(chr(int(letter,2))) #chr permet de donner la correspondance dans la table Unicode inscrite dans Python (la table ASCII y est inclue)
 elif Enc=="0010" :
     for doubleletter in Listeoctet :
-        letter1,letter2=doubleletter//45,doubleletter%45
+        doubleletter=int(doubleletter,2) 
+        lettre1,lettre2=alphanumeric[doubleletter//45],alphanumeric[doubleletter%45]  
+        message=message+lettre1+lettre2
+        message=message[:Length]     # Pour obtenir le message avec le bon nombre de lettre (au cas où il nous rajouterai une lettre)
+        
         
         
         
