@@ -1,0 +1,91 @@
+
+#Fonction du parcours matriciel
+def parcoursbits(demarrage,decallage,Taille,Matlecture) :
+    "demarrage:point de démarrage du parcours (TYP=2-liste)    decallage:1 si demarrage est sur la gauche, 2 si sur la droite     Taille: nombre de bits à lire    Matlecture:de travail (qui défini le sens de lecture)"
+
+    Nbbits=0 #Initialisation du compteur de bit
+    octet=""
+    positionbit=demarrage #position du bit à extraire
+
+    while Nbbits<Taille : #On extrait le bit tant qu'on en a pas assez, parcours des lignes
+
+        for j in range(decallage) : #parcours de droit à gauche
+
+            valeurbit = Matlecture[positionbit[0],positionbit[1]]
+
+            if valeurbit<42 :
+                octet+=str(valeurbit)
+                Nbbits+=1
+            positionbit[1]-=1 #décalage vers la gauche
+        
+        if Nbbits<Taille-1 :
+            decallage=2
+        else :
+            decallage=1
+
+        positionbit[0]-=1 #de bas en haut
+        positionbit[1]+=2 #retour à la colonne
+
+        if positionbit[0]<0 :
+            Matlecture=Matlecture[::-1,:]
+            positionbit=[Tailleversion-1,positionbit[1]-2]
+    
+    if decallage==1 :
+        positionbit[1]-=2
+        positionbit[0]+=1
+
+    return [octet,positionbit,decallage,Matlecture]
+
+
+
+
+#Détermination du type de données (ENC) et du la longueur du message (Length)
+
+
+
+demarrage=[Tailleversion-1,Tailleversion-1] #position de départ pour lire Enc
+Matlecture=MatQRdemask[:] #Matrice de travail au départ : la matrice démasquée
+Enc=parcoursbits(demarrage,2,4,Matlecture)[0] #Pour détecter le type de données
+demarrage=[Tailleversion-3,Tailleversion-1] #position de départ pour lire Length
+Listeoctet=[] #Inititalisation de la liste des octets
+
+# En fonction de la version et du mode d'encodage la taille (en bits) de LENGTH est différente :
+if Version<10 :      # Ici on prend en compte d'abord la version 
+    LengthIndice=1    
+elif Version>26 :
+    LengthIndice=3
+else :
+    LengthIndice=2
+    
+if Enc!='0100' and Enc!='0010':
+    print("Ce QR code est encodé dans un mode différent du byte et de l alphanumeric. Impossible de le décoder")
+else: # le message est encodé soit en byte ('0100') soit en alphanumeric ('0010')
+# Ici on prend en compte le mode d'encodage pour déterminer la taille de LENGTH
+    if Enc=="0100" :      
+    """ Le message est codé en Byte """
+        EncSize=8     # Nombre de bits qu'il faut lire pour obtenir un character du message
+        if LengthIndice==1 :
+            LengthSize=8
+        else :
+            LengthSize=16
+    else :
+        """ Le message est codé en Alphanumeric """
+        EncSize=11   # Nombre de bits qu'il faut lire pour obtenir 2 characters du message 
+        if LengthIndice==1 :
+            LengthSize=9
+        elif LengthSize==2 :
+            LengthSize=11
+        else :
+            LengthSize=13
+    resultat=parcoursbits(demarrage,2,LengthSize,Matlecture) #Résultat de la fonction parcoursbits
+    Length=int(resultat[0],2) #Donne la longueur du message
+    prembit=resultat[1] #Donne la position du prochain bit à lire
+
+    for l in range(Length) :      #Lecture du message à proprement dit
+        resultat=parcoursbits(prembit,EncSize,Matlecture)
+        Listeoctet.append(resultat[0])
+        prembit=resultat[1]
+        decallage=resultat[2]
+        Matlecture=resultat[3]
+
+#
