@@ -73,7 +73,7 @@ elif Enc=="0010" :
         doubleletter=int(doubleletter,2) 
         lettre1,lettre2=alphanumeric[doubleletter//45],alphanumeric[doubleletter%45]  
         message=message+lettre1+lettre2
-        message=message[:Length]     # Pour obtenir le message avec le bon nombre de lettre (au cas où il nous rajouterai une lettre)
+     message=message[:Length]     # Pour obtenir le message avec le bon nombre de lettre (au cas où il nous rajouterai une lettre)
         
         
         
