@@ -1,0 +1,214 @@
+"""
+Projet info: Lecture d'un QR Code
+Auteurs: Huitorel Camille, Moreau Annaëlle, Réauté Arthur
+Date:
+"""
+
+##   Importations et references
+from scipy import misc
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+#os.chdir("C:\\Users\prigepp\Documents\Prépa\_Informatique\Projet Info-QR code\Images")
+
+
+RefMasque = {  0 :lambda i,j: (i+j)%2 == 0,  1 :lambda i,j: i%2 == 0,  2 :lambda i,j: j%3 == 0,  3 :lambda i,j: (i+j)%3 == 0,  4 :lambda i,j: (i/2+j/3)%2 == 0,  5 :lambda i,j: (i*j)%2+(i*j)%3 == 0,  6 :lambda i,j: ((i*j)%3+i*j)%2 == 0,  7 :lambda i,j: ((i*j)%3+i+j)%2== 0}  #Références des masques
+
+posAlPat = {  1 :[],  2 :[18],  3 :[22],  4 :[26],  5 :[30],  6 :[34],  7 :[22, 38],  8 :[24, 42],  9 :[26, 46],  10 :[28, 50],  11 :[30, 54],  12 :[32, 58],  13 :[34, 62],  14 :[26, 46, 66],  15 :[26, 48, 70],  16 :[26, 50, 74],  17 :[30, 54, 78],  18 :[30, 56, 82],  19 :[30, 58, 86],  20 :[34, 62, 90],  21 :[28, 50, 72, 94],  22 :[26, 50, 74, 98],  23 :[30, 54, 78, 102],  24 :[28, 54, 80, 106],  25 :[32, 58, 84, 110],  26 :[30, 58, 86, 114],  27 :[34, 62, 90, 118],  28 :[26, 50, 74, 98, 122],  29 :[30, 54, 78, 102, 126],  30 :[26, 52, 78, 104, 130],  31 :[30, 56, 82, 108, 134],  32 :[34, 60, 86, 112, 138],  33 :[30, 58, 86, 114, 142],  34 :[34, 62, 90, 118, 146],  35 :[30, 54, 78, 102, 126, 150],  36 :[24, 50, 76, 102, 128, 154],  37 :[28, 54, 80, 106, 132, 158],  38 :[32, 58, 84, 110, 136, 162],  39 :[26, 54, 82, 110, 138, 166],  40 :[30, 58, 86, 114, 142, 170]}
+
+alphanumeric=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"," ","$","%","*","+","-",".","/",":"] #table alphanumerique
+
+
+
+img=misc.imread("qrcode.png")
+
+
+
+##   Traitement de l'image
+
+
+#----------Contraste
+
+for i in range(img.shape[0]) :
+    for j in range(img.shape[1]) :
+        for k in range(3) :
+            if img[i,j,k]>150 :
+                img[i,j,k]=255
+            else :
+                img[i,j,k]=0
+
+
+#----------Rognage
+
+for i in range(img.shape[0]) : #parcours de toutes les lignes
+    j=0 #compteur des colonnes
+    pix=img[i,j,0]
+    preN,derN=0,0
+    while j<img.shape[1] and preN==0 :
+        if img[i,j,0]==0 :
+            preN=[i,j]
+        j+=1
+    while j<img.shape[1] :
+        if img[i,j,0]==0 :
+            derN=[i,j]
+        j+=1
+    if derN!=0 :
+        break
+
+lenQR=derN[1]-preN[1]+1
+
+QRrogne=img[preN[0]:preN[0]+lenQR,preN[1]:derN[1]+1,:]
+
+
+#----------Evaluation de la taille en pixel des carrés
+
+j=0
+while QRrogne[0,j,0]==0 : #parcours des colonnes
+  j+=1
+  premB=j#colonne du premier pixel blanc
+taillecarre=premB//7#taille d'un carré en pixel
+
+#Détermination de la version
+Version=int(((np.shape(QRrogne)[0]/taillecarre-2*8)-1)//4) #longueur du timing pattern -1(car impair) divisé par 4 (http://www-igm.univ-mlv.fr/~dr/XPOSE2011/QRCode/description.html)        Doit être un entier
+
+Tailleversion=Version*4+17 #Taille du QR code
+
+
+
+##   Traitement Matriciel : Dechiffrage
+
+
+#----------Creation de la matrice QR
+
+MatQR=np.zeros([Tailleversion,Tailleversion],dtype='int') #Création d'une matrice en carré à remplir, en forçant le type des données en nombres entiers
+for i in range(Tailleversion) :
+    for j in range(Tailleversion) :
+        if QRrogne[taillecarre*i,taillecarre*j,0]==0 :
+            MatQR[i,j]+=1
+
+
+
+#----------Protection des zones non masquees : MatQRsecure
+
+MatQRsecure=np.copy(MatQR)
+for i in range(9) :  #protection des 3 finder patterns
+    for j in range(9) :
+        MatQRsecure[i,j]+=42 #en haut à gauche
+    for j in range(8) :
+        MatQRsecure[(Tailleversion)-8+j,i]+=42 #en haut à droite
+        MatQRsecure[i,(Tailleversion)-8+j]+=42 #en bas à gauche
+for k in range(4*Version) : #protection des 2 timing patterns
+    MatQRsecure[6,9+k]+=42 #horizontal
+    MatQRsecure[9+k,6]+=42 #vertical
+ListePosAlign=[]
+for i in posAlPat[Version] : #liste des positions des centres des aligment patterns
+    for j in posAlPat[Version] :
+        ListePosAlign.append([i,j])
+for PosCentral in ListePosAlign : #protection des alignment patterns
+    for i in range(-1,2) :
+        for j in range(-1,2) :
+            MatQRsecure[PosCentral[0]+i,PosCentral[1]+j]+=42
+
+#----------Demasquage
+
+FormatMasque=str(int(MatQR[8,4]))+str(int(MatQR[8,3]))+str(int(MatQR[8,2]))
+NumMasque=int(FormatMasque,2)
+
+def inverse(x) :
+    return int(x==0)
+
+MatQRdemask=np.copy(MatQRsecure)
+for i in range (Tailleversion) :
+    for j in range (Tailleversion) :
+        if MatQRsecure[i,j]<42 :
+            if RefMasque[NumMasque](i,j) :
+                MatQRdemask[i,j]=inverse(MatQRdemask[i,j])
+
+
+
+#----------Fonction de parcours matriciel
+
+
+def parcoursbits(demarrage,Taille,Matlecture) :
+    "demarrage:point de démarrage du parcours (TYP=2-liste)     Taille: nombre de bits à lire    Matlecture:de travail (qui défini le sens de lecture)"
+    Nbbits=0 #Initialisation du compteur de bit
+    messagecode=""
+    positionbit=demarrage #position du bit à extraire
+    while Nbbits<Taille : #On extrait le bit tant qu'on en a pas assez, parcours des lignes
+        for j in range(2) : #parcours de droite à gauche
+            valeurbit = Matlecture[positionbit[0],positionbit[1]]
+            if valeurbit<42 :
+                messagecode+=str(valeurbit)
+                Nbbits+=1
+                print([positionbit[0],positionbit[1]],valeurbit)
+            positionbit[1]-=1 #décalage vers la gauche
+        positionbit[0]-=1 #de bas en haut
+        positionbit[1]+=2 #retour à la colonne
+        if positionbit[0]<0 :
+            Matlecture=Matlecture[::-1,:]  #Parcous en sens inverse
+            positionbit=[Tailleversion-1,positionbit[1]-2]
+    return [messagecode,positionbit,Matlecture]
+
+
+#----------Détermination du type de données (ENC) et du la longueur du message (Length)
+
+
+
+demarrage=[Tailleversion-1,Tailleversion-1] #position de départ pour lire ENC
+Matlecture=MatQRdemask[:] #Matrice de travail au départ : la matrice démasquée
+lecture=parcoursbits(demarrage,4,Matlecture)
+Enc=lecture[0] #Pour détecter le type de données
+demarrage=lecture[1] #position de départ pour lire LENGTH
+
+
+# En fonction de la version et du mode d'encodage la taille (en bits) de LENGTH est différente :
+if Version<10 :      # Ici on prend en compte d'abord la version 
+    LengthIndice=1    
+elif Version>26 :
+    LengthIndice=3
+else :
+    LengthIndice=2
+    
+if Enc!='0100' and Enc!='0010':
+    print("Ce QR code est encodé dans un mode différent du byte et de l alphanumeric. Impossible de le décoder")
+else: # le message est encodé soit en byte ('0100') soit en alphanumeric ('0010')
+# Ici on prend en compte le mode d'encodage pour déterminer la taille de LENGTH
+    if Enc=="0100" :      #Le message est codé en Byte 
+        EncSize=8     # Nombre de bits qu'il faut lire pour obtenir un caractere du message
+        if LengthIndice==1 :
+            LengthSize=8
+        else :
+            LengthSize=16
+    else :   #Le message est codé en Alphanumeric 
+        EncSize=11   # Nombre de bits pour une double lettre
+        if LengthIndice==1 :
+            LengthSize=9
+        elif LengthSize==2 :
+            LengthSize=11
+        else :
+            LengthSize=13
+    lecture=parcoursbits(demarrage,LengthSize,Matlecture) #Résultat de la fonction parcoursbits
+    Length=int(lecture[0],2) #Donne la longueur du message
+    if Enc=="0010" :   # Attention en alphanumeric puisque 11 bits codent 2 caracteres, alors il faut lire seulement la moitie de la longueur du message (LENGTH)
+        LengthCorr=Length//2+Length%2
+    else:               # Ce n'est pas le cas en byte par contre, un octet est bien égale à un caracter
+        LengthCorr=Length
+        
+    demarrage=lecture[1] #Donne la position du prochain bit à lire
+    Matlecture=lecture[2]
+    messagecode=parcoursbits(demarrage,LengthCorr*EncSize,Matlecture)[0]
+    messagecode=list(messagecode) #passage de 'string' a 'list', pour pouvoir itterer
+    message=""
+    if Enc=="0100" :
+        for i in range(Length) :
+            caracterecode=int(''.join(messagecode[EncSize*i : EncSize*(i+1)]),2) #
+            message+=str(chr(caracterecode)) #chr permet de donner la correspondance dans la table Unicode inscrite dans Python (la table ASCII y est inclue)
+    else :
+        for i in range(LengthCorr) :
+            doublelettrecode=int(''.join(messagecode[EncSize*i : EncSize*(i+1)]),2)
+            lettre1,lettre2=alphanumeric[doublelettrecode//45],alphanumeric[doublelettrecode%45]
+            message=message+lettre1+lettre2
+        message=message[:Length]  # Permet d'enlever le "0" qui apparaît à la fin du message si ce dernier a un nombre impair de caracteres
+
+print(message)
