@@ -38,14 +38,12 @@ for i in range(img.shape[0]) :
             else :
                 img[i,j,k]=0
 
-
 #----------Rognage
 
 for i in range(img.shape[0]) : #parcours de toutes les lignes
     j=0 #compteur des colonnes
-    pix=img[i,j,0]
-    preN,derN=0,0
-    while j<img.shape[1] and preN==0 :
+    preN,derN=[0,0],[0,0]
+    while j<img.shape[1] and preN==[0,0] :
         if img[i,j,0]==0 :
             preN=[i,j]
         j+=1
@@ -53,7 +51,7 @@ for i in range(img.shape[0]) : #parcours de toutes les lignes
         if img[i,j,0]==0 :
             derN=[i,j]
         j+=1
-    if derN!=0 :
+    if derN!=[0,0] :
         break
 
 lenQR=derN[1]-preN[1]+1
@@ -84,7 +82,7 @@ Tailleversion=Version*4+17 #Taille du QR code
 MatQR=np.zeros([Tailleversion,Tailleversion],dtype='int') #Création d'une matrice en carré à remplir, en forçant le type des données en nombres entiers
 for i in range(Tailleversion) :
     for j in range(Tailleversion) :
-        if QRrogne[taillecarre*i,taillecarre*j,0]==0 :
+        if QRrogne[taillecarre*i+taillecarre//2,taillecarre*j+taillecarre//2,0]==0 :
             MatQR[i,j]+=1
 
 
@@ -162,14 +160,18 @@ Enc=lecture[0] #Pour détecter le type de données
 demarrage=lecture[1] #position de départ pour lire LENGTH
 
 
-# En fonction de la version et du mode d'encodage la taille (en bits) de LENGTH est différente :
+#----------Decodage final du QR code
+
+
+# En fonction de la version et du mode d'encodage, la taille (en bits) de LENGTH est différente :
 if Version<10 :      # Ici on prend en compte d'abord la version 
     LengthIndice=1    
 elif Version>26 :
     LengthIndice=3
 else :
     LengthIndice=2
-    
+
+
 if Enc!='0100' and Enc!='0010':
     print("Ce QR code est encodé dans un mode différent du byte et de l alphanumeric. Impossible de le décoder")
 else: # le message est encodé soit en byte ('0100') soit en alphanumeric ('0010')
