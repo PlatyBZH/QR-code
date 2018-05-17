@@ -149,7 +149,7 @@ def parcoursbits(demarrage,Taille,Matlecture) :
     return [messagecode,positionbit,Matlecture]
 
 
-#----------Détermination du type de données (ENC) et du la longueur du message (Length)
+#----------Détermination du type de données (ENC)
 
 
 
